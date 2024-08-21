@@ -269,3 +269,96 @@ void loop() {
 
   delay(1000);  // Délai d'une seconde entre chaque lecture pour éviter les fausses détections
 }
+
+
+
+
+TEMPERATURE
+const int sensorPin = A0;  // Broche analogique où le LM35 est connecté
+float temperature;
+
+void setup() {
+  Serial.begin(9600);  // Initialisation de la communication série pour afficher les données
+}
+
+void loop() {
+  int sensorValue = analogRead(sensorPin);  // Lecture de la valeur analogique du capteur
+  temperature = (sensorValue * 5.0 * 100.0) / 1024.0;  // Conversion de la valeur en température (en °C)
+
+  Serial.print("Température: ");
+  Serial.print(temperature);
+  Serial.println(" °C");
+
+  delay(1000);  // Délai d'une seconde entre chaque lecture
+}
+
+SMOKE
+
+const int sensorPin = A0;  // Broche analogique où le capteur MQ-2 est connecté
+const int ledPin = 7;      // Broche où la LED est connectée
+const int buzzerPin = 8;   // Broche où le buzzer est connecté
+
+int sensorValue;
+int threshold = 300;  // Seuil de détection de la fumée
+
+void setup() {
+  pinMode(ledPin, OUTPUT);    // LED configurée comme sortie
+  pinMode(buzzerPin, OUTPUT); // Buzzer configuré comme sortie
+  Serial.begin(9600);         // Initialisation de la communication série
+}
+
+void loop() {
+  sensorValue = analogRead(sensorPin);  // Lecture de la valeur analogique du capteur
+
+  Serial.print("Valeur du capteur : ");
+  Serial.println(sensorValue);  // Affichage de la valeur du capteur
+
+  if (sensorValue > threshold) {
+    digitalWrite(ledPin, HIGH);    // Allumer la LED
+    digitalWrite(buzzerPin, HIGH); // Activer le buzzer
+    Serial.println("Attention! Fumée détectée!");
+  } else {
+    digitalWrite(ledPin, LOW);     // Éteindre la LED
+    digitalWrite(buzzerPin, LOW);  // Désactiver le buzzer
+  }
+
+  delay(1000);  // Délai d'une seconde entre chaque lecture
+}
+MOTION DETECT
+
+
+const int pirPin = 2;      // Broche numérique où le capteur PIR est connecté
+const int ledPin = 7;      // Broche où la LED est connectée
+const int buzzerPin = 8;   // Broche où le buzzer est connecté
+
+int pirState = LOW;        // État actuel du capteur PIR
+int val = 0;               // Variable pour stocker la valeur lue du capteur PIR
+
+void setup() {
+  pinMode(pirPin, INPUT);    // Capteur PIR configuré comme entrée
+  pinMode(ledPin, OUTPUT);   // LED configurée comme sortie
+  pinMode(buzzerPin, OUTPUT);// Buzzer configuré comme sortie
+  Serial.begin(9600);        // Initialisation de la communication série
+}
+
+void loop() {
+  val = digitalRead(pirPin);  // Lecture de la valeur du capteur PIR
+
+  if (val == HIGH) {
+    if (pirState == LOW) {
+      Serial.println("Mouvement détecté!");  // Affiche un message sur le moniteur série
+      digitalWrite(ledPin, HIGH);  // Allumer la LED
+      digitalWrite(buzzerPin, HIGH);  // Activer le buzzer
+      pirState = HIGH;  // Met à jour l'état du capteur PIR
+    }
+  } else {
+    if (pirState == HIGH) {
+      Serial.println("Pas de mouvement");
+      digitalWrite(ledPin, LOW);  // Éteindre la LED
+      digitalWrite(buzzerPin, LOW);  // Désactiver le buzzer
+      pirState = LOW;  // Met à jour l'état du capteur PIR
+    }
+  }
+
+  delay(1000);  // Délai d'une seconde entre chaque lecture pour éviter les fausses détections
+}
