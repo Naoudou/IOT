@@ -362,3 +362,126 @@ void loop() {
 
   delay(1000);  // Délai d'une seconde entre chaque lecture pour éviter les fausses détections
 }
+
+
+
+
+HOME AUTOMATION
+
+#include<IRremote.hpp>
+
+const int rcvPin=8;
+int led=12;
+int bulb=11;
+int motor=7;
+IRrecv irrecv(rcvPin);
+
+void setup()
+{
+  Serial.begin(9600);
+  //IrReceiver.begin(rcvPin,true);
+  irrecv.enableIRIn();
+  pinMode(led,OUTPUT);
+  pinMode(bulb,OUTPUT);
+  pinMode(motor,OUTPUT);
+}
+void loop()
+{
+  
+  if(IrReceiver.decode()){
+    auto value=IrReceiver.decodedIRData.decodedRawData;
+    
+    switch(value)
+    {
+      case 4010852096: //keypad no'1'
+      digitalWrite(led,HIGH);
+      Serial.println(1);
+    }
+    switch(value)
+    {
+      case 3994140416: //keypad no'2'
+      digitalWrite(bulb,HIGH);
+      Serial.println(2);
+    }
+    switch(value)
+    {
+      case 3977428736: //keypad no'3'
+      digitalWrite(motor,HIGH);
+      Serial.println(3);
+    }
+    switch(value)
+    {
+      case 4278238976: //keypad no'power'
+      digitalWrite(led,LOW);
+      Serial.println("power");
+    }
+    switch(value)
+    {
+      case 4278238976: //keypad no'power'
+      digitalWrite(bulb,LOW);
+      Serial.println("power");
+    }
+    switch(value)
+    {
+      case 4278238976://keypad no 'power'
+      digitalWrite(motor,LOW);
+      Serial.println("power");
+    }
+    IrReceiver.resume();
+  }
+}
+
+
+
+
+AUTOMATIQUE PLANTE WATARING
+// C++ code
+//
+int moisture = 0;
+
+void setup()
+{
+  pinMode(A0, OUTPUT);
+  pinMode(A1, INPUT);
+  Serial.begin(9600);
+  pinMode(8, OUTPUT);
+  pinMode(9, OUTPUT);
+  pinMode(10, OUTPUT);
+  pinMode(11, OUTPUT);
+  pinMode(12, OUTPUT);
+}
+
+void loop()
+{
+  // Apply power to the soil moisture sensor
+  digitalWrite(A0, HIGH);
+  delay(10); // Wait for 10 millisecond(s)
+  moisture = analogRead(A1);
+  // Turn off the sensor to reduce metal corrosion
+  // over time
+  digitalWrite(A0, LOW);
+  Serial.println(moisture);
+  digitalWrite(8, LOW);
+  digitalWrite(9, LOW);
+  digitalWrite(10, LOW);
+  digitalWrite(11, LOW);
+  digitalWrite(12, LOW);
+  if (moisture < 200) {
+    digitalWrite(12, HIGH);
+  } else {
+    if (moisture < 400) {
+      digitalWrite(11, HIGH);
+    } else {
+      if (moisture < 600) {
+        digitalWrite(10, HIGH);
+      } else {
+        if (moisture < 800) {
+          digitalWrite(9, HIGH);
+        } else {
+          digitalWrite(8, HIGH);
+        }
+      }
+    }
+  }
+  delay(100); // Wait for 100 millisecond(s)
+}
