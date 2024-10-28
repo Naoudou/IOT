@@ -612,8 +612,70 @@ void loop()
 
 
 
+HOME AUTOMATION
 
+#include<IRremote.hpp>
 
+const int rcvPin=8;
+int led=12;
+int bulb=11;
+int motor=7;
+IRrecv irrecv(rcvPin);
+
+void setup()
+{
+  Serial.begin(9600);
+  //IrReceiver.begin(rcvPin,true);
+  irrecv.enableIRIn();
+  pinMode(led,OUTPUT);
+  pinMode(bulb,OUTPUT);
+  pinMode(motor,OUTPUT);
+}
+void loop()
+{
+  
+  if(IrReceiver.decode()){
+    auto value=IrReceiver.decodedIRData.decodedRawData;
+    
+    switch(value)
+    {
+      case 4010852096: //keypad no'1'
+      digitalWrite(led,HIGH);
+      Serial.println(1);
+    }
+    switch(value)
+    {
+      case 3994140416: //keypad no'2'
+      digitalWrite(bulb,HIGH);
+      Serial.println(2);
+    }
+    switch(value)
+    {
+      case 3977428736: //keypad no'3'
+      digitalWrite(motor,HIGH);
+      Serial.println(3);
+    }
+    switch(value)
+    {
+      case 4278238976: //keypad no'power'
+      digitalWrite(led,LOW);
+      Serial.println("power");
+    }
+    switch(value)
+    {
+      case 4278238976: //keypad no'power'
+      digitalWrite(bulb,LOW);
+      Serial.println("power");
+    }
+    switch(value)
+    {
+      case 4278238976://keypad no 'power'
+      digitalWrite(motor,LOW);
+      Serial.println("power");
+    }
+    IrReceiver.resume();
+  }
+}
 
 
 
